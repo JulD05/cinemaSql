@@ -470,4 +470,3 @@ CREATE TABLE cinema.Film_has_Acteur
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-
