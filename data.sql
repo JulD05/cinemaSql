@@ -37,21 +37,13 @@ VALUES ("Le Seigneur des Anneaux : La communauté de l'anneau", 178, "2001-12-19
         ("Le Seigneur des Anneaux : Les deux tours", 179, "2002-12-18", "Après la mort de Boromir et la disparition de Gandalf,  la Communauté s'est scindée en trois. Perdus dans les collines d'Emyn Muil  Frodon et Sam découvrent qu'ils sont suivis par Gollum  une créature versatile corrompue par l'Anneau etc.", 0, 8, 1, 1),
         ("Le Seigneur des Anneaux : Le retour du roi", 201, "2003-12-17", "Les armées de Sauron ont attaqué Minas Tirith  la capitale de Gondor. Jamais ce royaume autrefois puissant n'a eu autant besoin de son roi. Mais Aragorn trouvera-t-il en lui la volonté d'accomplir sa destinée ?", 0, 8, 1, 1),
         ("Les chambres rouges", 118, "2024-01-10", "Deux jeunes femmes se réveillent chaque matin aux portes du palais de justice pour pouvoir assister au procès hypermédiatisé", 0, 8, 2, 3),
-        ("Anatomie d'une chute", 150, "2023-01-01", "Sandra, Samuel et leur fils malvoyant de 11 ans, Daniel, vivent depuis un an loin de tout, à la montagne. Un jour, Samuel est etc.", 0, 8, 3, 1)
+        ("Anatomie d'une chute", 150, "2023-01-01", "Sandra, Samuel et leur fils malvoyant de 11 ans, Daniel, vivent depuis un an loin de tout, à la montagne. Un jour, Samuel est etc.", 0, 8, 3, 1);
 
-INSERT INTO cinema.Film_has_Acteur (Film_id, Acteur_id) VALUES (1, 4), (1, 7), (1, 10), (2, 4), (2, 7), (2, 10), (3, 4), (3, 7), (3, 10), (4, 5), (4, 8), (5, 6), (5, 9);
-
+INSERT INTO cinema.Film_has_Acteur (Film_id, Acteur_id) VALUES (1, 1), (1, 4), (1, 7), (2, 1), (2, 4), (2, 7), (3, 1), (3, 4), (3, 7), (4, 2), (4, 5), (5, 3), (5, 6);
 INSERT INTO cinema.Film_has_Genre (Film_id, Genre_id) VALUES (1, 15), (1, 5), (2, 15), (2, 5), (3, 5), (3, 15), (4, 16), (5, 1), (5, 14), (5, 16);
 
 INSERT INTO cinema.Creneau (Date, Heure) VALUES ("2024-03-05", "10:00:00"), ("2024-03-05", "14:00:00"), ("2024-03-05", "18:15:00"), ("2024-03-05", "20:00:00"), ("2024-03-05", "22:00:00"), ("2024-03-10", "10:00:00"), ("2024-03-10", "14:00:00"), ("2024-03-10", "18:15:00"), ("2024-03-10", "20:00:00"), ("2024-03-10", "22:00:00");
 
 INSERT INTO cinema.Plan_Seance (Creneau_id, Film_id, Salle_id, Langue_id) VALUES (1, 1, 1, 1), (2, 2, 1, 2), (4, 3, 1, 2), (1, 4, 2, 1), (2, 5, 2, 2), (4, 1, 2, 2), (1, 2, 3, 1), (3, 3, 3, 2), (5, 4, 3, 2), (1, 5, 1, 1), (2, 1, 1, 2), (4, 2, 1, 2), (5, 3, 1, 1), (1, 4, 2, 1), (2, 5, 2, 2), (4, 1, 2, 2), (5, 2, 2, 2), (3, 3, 3, 2), (4, 4, 3, 2), (5, 5, 3, 2);
 
-INSERT INTO cinema.Billet (Tarif_id, Seance_id, Salle_id) VALUES (1, 4, 2), (1, 7, 3), (3, 10, 1), (4, 14, 2), (5, 20, 3);
-
-
-
-
-
-
-
+INSERT INTO cinema.Billet (Tarif_id, Seance_id, Salle_id) VALUES (1, 4, 2), (1, 7, 3), (3, 10, 1), (4, 14, 2), (2, 20, 3);

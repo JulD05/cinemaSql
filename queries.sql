@@ -66,7 +66,7 @@ VALUES ("Le Seigneur des Anneaux : La communauté de l'anneau", 178, "2001-12-19
         ("Les chambres rouges", 118, "2024-01-10", "Deux jeunes femmes se réveillent chaque matin aux portes du palais de justice pour pouvoir assister au procès hypermédiatisé", 0, 8, 2, 3),
         ("Anatomie d'une chute", 150, "2023-01-01", "Sandra, Samuel et leur fils malvoyant de 11 ans, Daniel, vivent depuis un an loin de tout, à la montagne. Un jour, Samuel est etc.", 0, 8, 3, 1)
 
-INSERT INTO cinema.Film_has_Acteur (Film_id, Acteur_id) VALUES (1, 4), (1, 7), (1, 10), (2, 4), (2, 7), (2, 10), (3, 4), (3, 7), (3, 10), (4, 5), (4, 8), (5, 6), (5, 9);
+INSERT INTO cinema.Film_has_Acteur (Film_id, Acteur_id) VALUES (1, 1), (1, 4), (1, 7), (2, 1), (2, 4), (2, 7), (3, 1), (3, 4), (3, 7), (4, 2), (4, 5), (5, 3), (5, 6);
 
 INSERT INTO cinema.Film_has_Genre (Film_id, Genre_id) VALUES (1, 15), (1, 5), (2, 15), (2, 5), (3, 5), (3, 15), (4, 16), (5, 1), (5, 14), (5, 16);
 
@@ -115,9 +115,67 @@ SELECT format_movie_duration(133);
 
 -- Question 8:
 
+SELECT
+    f.Titre AS Titre,
+    f.Synopsis AS Synopsis,
+    CONCAT(pr.Nom, ' ', pr.Prenom) AS Realisateur,
+    GROUP_CONCAT(CONCAT(pa.Nom, ' ', pa.Prenom) SEPARATOR ', ') AS Acteurs,
+    CONCAT(f.Duree DIV 60, 'h', LPAD(f.Duree MOD 60, 2, '0')) AS Duree_du_film,
+    GROUP_CONCAT(g.Intitule SEPARATOR ', ') AS Genres,
+    la.Intitule AS Public,
+    f.Commentaire_additionnel AS Commentaire
+FROM
+    cinema.Film f
+    JOIN cinema.Realisateur r ON f.Realisateur_id = r.id
+    JOIN cinema.Personne pr ON r.Personne_id = pr.id
+    JOIN cinema.Film_has_Acteur fa ON f.id = fa.Film_id
+    JOIN cinema.Acteur a ON fa.Acteur_id = a.id
+    JOIN cinema.Personne pa ON a.Personne_id = pa.id
+    JOIN cinema.Film_has_Genre fg ON f.id = fg.Film_id
+    JOIN cinema.Genre g ON fg.Genre_id = g.id
+    JOIN cinema.LimiteAge la ON f.LimiteAge_id = la.id
+WHERE
+    f.Titre = "Anatomie d'une chute"
+GROUP BY
+    f.Titre,
+    f.Synopsis,
+    pr.Nom,
+    pr.Prenom,
+    f.Duree,
+    la.Intitule,
+    f.Commentaire_additionnel;
 
+-- Création de la vue : 
+CREATE VIEW movie_summary AS
+SELECT
+    f.Titre AS Titre,
+    f.Synopsis AS Synopsis,
+    CONCAT(pr.Nom, ' ', pr.Prenom) AS Realisateur,
+    GROUP_CONCAT(CONCAT(pa.Nom, ' ', pa.Prenom) SEPARATOR ', ') AS Acteurs,
+    CONCAT(f.Duree DIV 60, 'h', LPAD(f.Duree MOD 60, 2, '0')) AS Duree_du_film,
+    GROUP_CONCAT(g.Intitule SEPARATOR ', ') AS Genres,
+    la.Intitule AS Public,
+    f.Commentaire_additionnel AS Commentaire
+FROM
+    cinema.Film f
+    JOIN cinema.Realisateur r ON f.Realisateur_id = r.Personne_id
+    JOIN cinema.Personne pr ON r.Personne_id = pr.id
+    JOIN cinema.Film_has_Acteur fa ON f.id = fa.Film_id
+    JOIN cinema.Acteur a ON fa.Acteur_id = a.id
+    JOIN cinema.Personne pa ON a.Personne_id = pa.id
+    JOIN cinema.Film_has_Genre fg ON f.id = fg.Film_id
+    JOIN cinema.Genre g ON fg.Genre_id = g.id
+    JOIN cinema.LimiteAge la ON f.LimiteAge_id = la.id
+GROUP BY
+    f.Titre,
+    f.Synopsis,
+    pr.Nom,
+    pr.Prenom,
+    f.Duree,
+    la.Intitule,
+    f.Commentaire_additionnel;
 
--- Question 9: (A revoir)
+-- Question 9:
 DELIMITER //
 CREATE PROCEDURE print_movie_summary (IN movie_title VARCHAR(100))
 BEGIN
@@ -187,4 +245,67 @@ WHERE
         )
     );
 
+-- Question 11:
 
+SELECT
+    f.Titre AS Film,
+    l.Langue AS Langue,
+    c.Date AS Date,
+    c.Heure AS Heure,
+    s.Salle_id AS Salle,
+    CASE
+        WHEN DAYOFWEEK(c.Date) BETWEEN 2 AND 6 THEN 'Semaine'
+        WHEN DAYOFWEEK(c.Date) IN (1, 7) THEN 'Weekend'
+    END AS Creneaux
+FROM
+    cinema.Plan_Seance s
+    INNER JOIN cinema.Film f ON s.Film_id = f.id
+    INNER JOIN cinema.Creneau c ON s.Creneau_id = c.id
+    INNER JOIN cinema.Langue l ON s.Langue_id = l.id
+WHERE
+    DAYOFWEEK(c.Date) BETWEEN 1 AND 7
+ORDER BY
+    f.Titre ASC,
+    c.Date ASC,
+    c.Heure ASC;
+
+-- Question 12: 
+
+INSERT INTO cinema.Billet (Tarif_id, Seance_id, Salle_id)
+SELECT Tarif_id, Seance_id, Salle_id
+FROM (
+    SELECT 
+        t.id AS Tarif_id,
+        (SELECT ps.id 
+         FROM cinema.Plan_Seance ps 
+         JOIN cinema.Creneau c ON ps.Creneau_id = c.id 
+         WHERE ps.Film_id = 1 AND c.Date = '2024-03-05' AND c.Heure = '10:00:00'
+         LIMIT 1) AS Seance_id,
+        (SELECT id FROM cinema.Salle WHERE Nom = 'Salle 02') AS Salle_id
+    FROM cinema.Tarif t
+    WHERE t.Intitule IN ('Tarif plein', 'Tarif demandeur d\'emploi')
+) AS tickets;
+
+SELECT b.id AS Ticket_ID, t.Intitule AS Tarif, f.Titre AS Film, c.Date AS Date, c.Heure AS Heure, s.Nom AS Salle
+FROM cinema.Billet b
+JOIN cinema.Tarif t ON b.Tarif_id = t.id
+JOIN cinema.Plan_Seance ps ON b.Seance_id = ps.id
+JOIN cinema.Creneau c ON ps.Creneau_id = c.id
+JOIN cinema.Salle s ON b.Salle_id = s.id
+JOIN cinema.Film f ON ps.Film_id = f.id
+WHERE f.Titre = 'Le Seigneur des Anneaux : La communauté de l\'anneau' AND c.Date = '2024-03-05' AND c.Heure = '10:00:00'
+ORDER BY b.id;
+
+-- Question 13:
+SELECT 
+    (SELECT Nb_Places FROM cinema.Salle WHERE Nom = 'Salle 02') - 
+    (SELECT COUNT(*) FROM cinema.Billet WHERE Seance_id IN 
+        (SELECT ps.id FROM cinema.Plan_Seance ps 
+         JOIN cinema.Creneau c ON ps.Creneau_id = c.id 
+         WHERE c.Date = '2024-03-05' AND c.Heure = '10:00:00')
+    ) AS Places_Restantes;
+
+
+-- Question 14:
+-- Il est envisageable d'utiliser un déclencheur BEFORE INSERT sur la table Plan_Seance qui vérifiera si la séance inséré ne chevauche pas les
+-- horaires de séances existantes pour la même salle et le même créneau.
