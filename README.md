@@ -8,19 +8,19 @@ Ce projet a été réalisé dans le but d'être évalué sur les connaissances a
 2. Modele conceptuel de données
 
 ## Initialisation
-### 1. Cloner le projet
+## 1. Cloner le projet
 Pour débuter, il est nécessaire de cloner ce repositorie github afin d'obtenir les fichiers nécessaires. Utiliser la commande ci-dessous :
 
-git clone git@github.com:JulD05/cinemaSql.git
+<pre>git clone git@github.com:JulD05/cinemaSql.git</pre>
 
-### Création de la base, insertion des données et insertion des requêtes
+## Création de la base, insertion des données et insertion des requêtes
 Une fois le clone du repositorie réalisé, utiliser les 3 commandes suivantes dans un terminal se trouvant dans le dossier du dépôt cloné précédemment.
-#### Création de la base de données
-mysql -u username -p < schema.sql
-#### Insertion des données
-mysql -u username -p cinema < data.sql
-#### Insertion des requêtes
-mysql -u username -p cinema < queries.sql
+## Création de la base de données
+<pre>mysql -u username -p < schema.sql</pre>
+## Insertion des données
+<pre>mysql -u username -p cinema < data.sql</pre>
+## Insertion des requêtes
+<pre>mysql -u username -p cinema < queries.sql</pre>
 
 ## Modele conceptuel de données
 ![Modele conceptuel de données](mcd.png)
